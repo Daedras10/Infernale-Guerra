@@ -1,0 +1,14 @@
+FileVersion:2
+Type:Static
+Guid:C3D1FE52-426F-1A4A-F795-80978E180049
+ParentGuid:00000000-0000-0000-0000-000000000000
+
+/Game/Blueprints/FunctionLibrary/BP_FunctionLibraryInfernale.BP_FunctionLibraryInfernale
+/Game/Blueprints/LD/Buildings/BP_MainBuilding.BP_MainBuilding
+/Game/DataAssets/DA_InfernalePawn.DA_InfernalePawn
+/Game/Environment/Props/Building/City/SM_CityCenter4.SM_CityCenter4
+/Game/Environment/Props/Building/City/SM_CityDistrict1.SM_CityDistrict1
+/Game/Environment/Props/Building/City/SM_CityDistrict2.SM_CityDistrict2
+/Game/Environment/Props/Building/City/SM_CityDistrict3.SM_CityDistrict3
+/Game/Environment/Props/Building/City/SM_CityDistrict4.SM_CityDistrict4
+/Game/Environment/Props/Building/City/SM_CityDistrict5.SM_CityDistrict5

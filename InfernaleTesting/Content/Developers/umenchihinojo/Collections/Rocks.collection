@@ -1,0 +1,14 @@
+FileVersion:2
+Type:Static
+Guid:0966CC78-4D0B-85A2-5E72-BEA7ABF46B4D
+ParentGuid:00000000-0000-0000-0000-000000000000
+
+/Game/Environment/Props/LA-Iteration/Props_Rochers/SM_Cliff.SM_Cliff
+/Game/Environment/Props/LA-Iteration/Props_Rochers/SM_Cliff01.SM_Cliff01
+/Game/Environment/Props/LA-Iteration/Props_Rochers/SM_Cliff02.SM_Cliff02
+/Game/Environment/Props/LA-Iteration/Props_Rochers/SM_CliffLarge.SM_CliffLarge
+/Game/Environment/Props/LA-Iteration/Props_Rochers/SM_LargePique.SM_LargePique
+/Game/Environment/Props/LA-Iteration/Props_Rochers/SM_Mountain.SM_Mountain
+/Game/Environment/Props/LA-Iteration/Props_Rochers/SM_Pique.SM_Pique
+/Game/Environment/Props/LA-Iteration/Props_Rochers/SM_PiqueVar.SM_PiqueVar
+/Game/Environment/Props/LA-Iteration/Props_Rochers/SM_SmallCliff.SM_SmallCliff
