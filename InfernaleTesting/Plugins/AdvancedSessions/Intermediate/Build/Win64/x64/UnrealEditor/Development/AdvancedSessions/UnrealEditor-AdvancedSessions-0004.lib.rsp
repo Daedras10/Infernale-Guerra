@@ -1,0 +1,14 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-AdvancedSessions-0004.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Intermediate\Build\Win64\x64\InfernaleTestingEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.InclOrderOldest.h.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\Module.AdvancedSessions.1.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\Module.AdvancedSessions.2.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\Module.AdvancedSessions.3.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\Default.rc2.res"
+/OUT:"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\UnrealEditor-AdvancedSessions-0004.lib"

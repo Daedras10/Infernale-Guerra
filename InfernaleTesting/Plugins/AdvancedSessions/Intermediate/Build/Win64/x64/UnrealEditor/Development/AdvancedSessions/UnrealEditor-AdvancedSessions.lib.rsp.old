@@ -1,0 +1,36 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-AdvancedSessions.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Intermediate\Build\Win64\x64\InfernaleTestingEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.InclOrderOldest.h.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\Module.AdvancedSessions.1.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\Module.AdvancedSessions.2.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\Module.AdvancedSessions.3.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\AdvancedExternalUILibrary.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\AdvancedFriendsGameInstance.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\AdvancedFriendsInterface.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\AdvancedFriendsLibrary.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\AdvancedIdentityLibrary.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\AdvancedSessions.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\AdvancedSessionsLibrary.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\AdvancedVoiceLibrary.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\AutoLoginUserCallbackProxy.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\CancelFindSessionsCallbackProxy.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\CreateSessionCallbackProxyAdvanced.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\EndSessionCallbackProxy.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\FindFriendSessionCallbackProxy.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\FindSessionsCallbackProxyAdvanced.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\GetFriendsCallbackProxy.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\GetRecentPlayersCallbackProxy.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\GetUserPrivilegeCallbackProxy.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\LoginUserCallbackProxy.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\LogoutUserCallbackProxy.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\SendFriendInviteCallbackProxy.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\StartSessionCallbackProxyAdvanced.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\UpdateSessionCallbackProxyAdvanced.cpp.obj"
+"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\Default.rc2.res"
+/OUT:"D:\Perforce Workspaces\ArthurDevWorkspace\InfernaleTesting\Plugins\AdvancedSessions\Intermediate\Build\Win64\x64\UnrealEditor\Development\AdvancedSessions\UnrealEditor-AdvancedSessions.lib"
