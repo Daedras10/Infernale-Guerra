@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\perforce workspaces\\arthurdevworkspace\\infernaletesting\\plugins\\advancedsteamsessions\\source\\advancedsteamsessions\\private\\advancedsteamsessions.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\perforce workspaces\\arthurdevworkspace\\infernaletesting\\intermediate\\build\\win64\\x64\\infernaletestingeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.inclorderoldest.h.pch",
+        "Includes": [
+            "d:\\perforce workspaces\\arthurdevworkspace\\infernaletesting\\plugins\\advancedsteamsessions\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\advancedsteamsessions\\definitions.advancedsteamsessions.h",
+            "d:\\perforce workspaces\\arthurdevworkspace\\infernaletesting\\plugins\\advancedsteamsessions\\source\\advancedsteamsessions\\classes\\advancedsteamsessions.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
