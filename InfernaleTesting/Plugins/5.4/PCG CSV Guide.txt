@@ -1,0 +1,3 @@
+When opening "Houdini_Import_DataTable.uasset" for the first time, Unreal may not be able to find the node called "Break CSV Point Format". (This is likely a known issue on the Unreal side.) All you have to do in that case is to recreate it and rewire it to the other nodes.
+
+Note: In case the "Break CSV Point Format" node does not exist in the search, you can copy and paste the content from the text file "Break CSV Point Format node as text.txt" into the Houdini Import DataTable Blueprint to recreate the node.
