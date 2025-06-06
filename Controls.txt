@@ -1,0 +1,25 @@
+Move : 
+	ZQSD (& WA for wasd)
+	Arrows
+	Screen edges
+	Right click on the floor then drag
+
+Zoom : Mouse wheel
+
+Rotation : Middle mouse button
+
+FluxMode : F
+
+
+Left Click without flux mode : interact (build on breach, make building permanent, see linked breaches)
+Left Click with flux mode : 
+	On MainBuilding or portal select them for flux creation (add to selection if ctrl is pressed, replace otherwise)
+	On FluxNode, move the node (drag)
+	On Flux, create a new node (drag)
+	On anything else : deselect
+
+Right click on flux mode
+	On FluxNode, remove the node (hold)
+	On Flux, remove the flux (hold)
+	On anything else, if there are building selected for flux creation, create a flux
+		if shift is pressed, it does not deselect the buildings, allowing for multiple checkpoint in the flux to be created
