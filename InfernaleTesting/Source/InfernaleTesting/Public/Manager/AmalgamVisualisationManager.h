@@ -21,6 +21,11 @@
 #include "Structs/SimpleStructs.h"
 #include "AmalgamVisualisationManager.generated.h"
 
+
+struct FMassSpawnDataGenerator;
+struct FMassSpawnedEntityType;
+class AClientMassSpawner;
+class AAmalgamSpawnerParent;
 struct FDataForVisualisation;
 enum class EEntityType : uint8;
 
@@ -45,25 +50,18 @@ struct FBPVisualElement
 	GENERATED_USTRUCT_BODY()
 
 	FBPVisualElement() = default;
-	FBPVisualElement(uint64 InHandle, AActor* InElement) : Handle(InHandle), Element(InElement)
+	FBPVisualElement(uint64 InHandle, uint64 InClientHandle, AActor* InElement) : Handle(InHandle), ClientHandle(InClientHandle), 
+		Element(InElement)
 	{
 	}
 
-	inline bool operator==(const FNiagaraVisualElement Other) { return Handle == Other.Handle; }
+	inline bool operator==(const FNiagaraVisualElement Other) const { return Handle == Other.Handle; }
 
 	uint64 Handle;
+	uint64 ClientHandle;
 	TWeakObjectPtr<AActor> Element;
 };
 
-
-USTRUCT()
-struct FTruc
-{
-	GENERATED_USTRUCT_BODY()
-public:
-	FMassEntityHandle EntityHandle;
-	UNiagaraComponent* NiagaraComponent;
-};
 
 USTRUCT()
 struct FDataForSpawnVisual
@@ -77,6 +75,7 @@ public:
 	UPROPERTY() UWorld* World;
 	UPROPERTY() TSubclassOf<AActor> BPVisualisation;
 	UPROPERTY() FVector Location;
+	UPROPERTY() AFlux* Flux = nullptr;
 	UPROPERTY() float SpeedMultiplier = -1;
 	UPROPERTY() EEntityType EntityType;
 	UPROPERTY() int NumberOfSpawners = 1;
@@ -95,6 +94,23 @@ public:
 	UPROPERTY() bool Value;
 };
 
+USTRUCT()
+struct FAmalgamClientInitializeInfo
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY() FMassEntityHandle ServerEntityHandle;
+	UPROPERTY() FOwner EntityOwner;
+	UPROPERTY() TSubclassOf<AActor> BPVisualisation;
+	UPROPERTY() FVector Location;
+	UPROPERTY() AFlux* Flux = nullptr;
+	UPROPERTY() EEntityType EntityType;
+};
+
+
+
+
 UCLASS()
 class INFERNALETESTING_API AAmalgamVisualisationManager : public AActor
 {
@@ -110,12 +126,14 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(CallInEditor) void DebugAIandEQS();
 	
 	/* End of Default AActor Methods */
 
 public: /* Public AVM Methods */
-	void CreateAndAddToMapP(FMassEntityHandle EntityHandle, FOwner EntityOwner, const UWorld* World, UNiagaraSystem* NiagaraSystem, const FVector Location);
-	void CreateAndAddToMapP(FMassEntityHandle EntityHandle, FDataForSpawnVisual DataForSpawnVisual);
+	void CreateAndAddToMapPSimple(FMassEntityHandle EntityHandle, FOwner EntityOwner, const UWorld* World, UNiagaraSystem* NiagaraSystem, const FVector Location);
+	void CreateAndAddToMapPBP(FMassEntityHandle EntityHandle, FDataForSpawnVisual DataForSpawnVisual);
 	void BatchUpdatePosition(const TArray<FMassEntityHandle>& EntityHandles, const TArray<FDataForVisualisation>& DataForVisualisations);
 	void UpdatePositionP(FMassEntityHandle EntityHandle, const FDataForVisualisation DataForVisualisation);
 	void UpdateStateP(FMassEntityHandle EntityHandle, bool IsFighting);
@@ -130,10 +148,24 @@ public: /* Public AVM Methods */
 
 	void ShowHideAllItems(bool bShow);
 	FBPVisualElement* FindElementBP(uint64 ElementHandle);
+	bool IsGameIsEnding();
+	void SetGameIsEnding(bool Value);
+
+	void AddClientHandleTo(uint64 ElementHandle, uint64 ClientHandle);
+
+	bool ClientInitializeInfosIsEmpty();
+	FAmalgamClientInitializeInfo GetFirstClientInitializeInfosAndRemoveit();
+
+	FBPVisualElement CreateVisualUnitClient(FAmalgamClientInitializeInfo ClientInitializeInfo);
+	AClientMassSpawner* GetClientSpawner(EEntityType EntityType) const;
 
 protected: /* Protected AVM Methods */
 		   /* These should only be called through replicated methods */
 		   /* so that managers are never out of sync */
+
+	void CreateClientSpawners();
+	
+	
 
 	void AddToMap(FMassEntityHandle EntityHandle, UNiagaraComponent* NiagaraComponent);
 	void AddToMap(FMassEntityHandle EntityHandle, AActor* BPActor);
@@ -158,6 +190,7 @@ protected: /* Protected AVM Methods */
 	UFUNCTION(NetMulticast, Reliable) void BatchUpdatePositionMulticast(const TArray<FMassEntityHandle>& EntityHandles, const TArray<FDataForVisualisation>& DataForVisualisations);
 	UFUNCTION(NetMulticast, Reliable) void RemoveFromMapMulticast(FMassEntityHandle EntityHandle);
 	UFUNCTION(NetMulticast, Reliable) void ChangeBatchMulticast(int Value);
+	UFUNCTION(NetMulticast, Reliable) void SetGameIsEndingMulticast(bool Value);
 
 private: /* Private Methods */
 
@@ -168,8 +201,20 @@ private: /* Private Methods */
 
 public: /* Public Member variables */
 
-private: /* Private Member variables */
+protected: /* Private Member variables */
+	UPROPERTY() AClientMassSpawner* ClientMassSpawnerGobborit;
+	UPROPERTY() AClientMassSpawner* ClientMassSpawnerNeras;
+	UPROPERTY() AClientMassSpawner* ClientMassSpawnerBehemot;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Mass") TArray<FMassSpawnedEntityType> EntityTypesGobborit;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Mass") TArray<FMassSpawnedEntityType> EntityTypesNeras;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Mass") TArray<FMassSpawnedEntityType> EntityTypesBehemot;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Mass") TArray<FMassSpawnDataGenerator> SpawnDataGeneratorsGobborit;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Mass") TArray<FMassSpawnDataGenerator> SpawnDataGeneratorsNeras;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Mass") TArray<FMassSpawnDataGenerator> SpawnDataGeneratorsBehemot;
+
+	TArray<FAmalgamClientInitializeInfo> ClientInitializeInfos = TArray<FAmalgamClientInitializeInfo>();
 	TArray<FNiagaraVisualElement> ElementArray;
 	TArray<FBPVisualElement> BPElementsArray;
 
@@ -180,10 +225,12 @@ private: /* Private Member variables */
 	int CurrentBatch = 0;
 	int UnitsByBatch = 50;
 
-	AInfernalePawn* InfernalePawn;
+	UPROPERTY() AInfernalePawn* InfernalePawn;
+	
 	FVector LocalPointLocation;
 	
 	int Radius = 11000;
+	bool bGameIsEnding = false;
 	
 	/*UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> BPVisualisation;*/

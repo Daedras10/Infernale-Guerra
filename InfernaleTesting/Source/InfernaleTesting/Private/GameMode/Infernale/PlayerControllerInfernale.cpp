@@ -237,12 +237,20 @@ FVector APlayerControllerInfernale::GetCameraCenterPoint() const
 /* TArray<FDataForVisualisation> */
 void APlayerControllerInfernale::UpdateUnits(const TArray<FDataForVisualisation>& UnitsToReplicate, const TArray<FMassEntityHandle>& EntitiesToHide)
 {
+	auto GameSettings = UFunctionLibraryInfernale::GetGameSettingsDataAsset();
 	// if (!AllowedToReplicateThisFrame) return;
 	// AllowedToReplicateThisFrame = false;
 	if (!IsLocalController())
 	{
 		//UpdateUnitsOwner(UnitsToReplicate, EntitiesToHide);
-		UpdateUnitsInfoOwner(UnitsToReplicate);
+
+		
+		//TODO: Re-add allways
+		if (!GameSettingsDataAsset->UseMassLocal) UpdateUnitsInfoOwner(UnitsToReplicate);
+		else
+		{
+			//TODO sometimes
+		}
 
 		if (EntitiesToHide.Num() == 0) return;
 

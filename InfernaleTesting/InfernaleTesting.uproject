@@ -14,7 +14,8 @@
 				"MassEntity",
 				"AdvancedSessions",
 				"Niagara",
-				"UMG"
+				"UMG",
+				"AIModule"
 			]
 		}
 	],

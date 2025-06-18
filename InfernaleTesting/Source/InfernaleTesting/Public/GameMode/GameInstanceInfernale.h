@@ -74,6 +74,7 @@ public:
 	UFUNCTION(BlueprintCallable) void SetVSync(bool bNewValue);
 
 	UFUNCTION(BlueprintCallable) void SaveGameSettings();
+	UFUNCTION(BlueprintCallable) void SetupPlayerSettings();
 	UFUNCTION(BlueprintCallable) void LoadGameSettings();
 
 	UPROPERTY(BlueprintAssignable) FOnLoadedSettings OnLoadedSettings;
@@ -157,4 +158,7 @@ public:
 	void PlaySoundWithChangedVolumePitch(const UObject* WorldContextObject, FString SoundTypeName, FString SoundName, FVector Location, FRotator Rotation, float Volume, float Pitch);
 	UFUNCTION(BlueprintCallable, Category = "SoundsDataAsset", meta=(WorldContext="WorldContextObject", AdvancedDisplay = "3", UnsafeDuringActorConstruction = "true", Keywords = "play"))
 	void PlaySound2DWithChangedVolumePitch(const UObject* WorldContextObject, FString SoundTypeName, FString SoundName, float Volume, float Pitch);
+
+private:
+	bool bInitialized = false;
 };

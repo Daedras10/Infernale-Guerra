@@ -10,11 +10,12 @@ public class InfernaleTesting : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { 
 			"Core", "CoreUObject", "Engine", "RHI", "RenderCore", "InputCore", "EnhancedInput",
-			"AdvancedSessions", "AdvancedSessions",
-			"UMG", "Slate", "SlateCore", "Niagara", "MassEntity", "MoviePlayer", 
+			"AdvancedSessions", "UMG", "Slate", "SlateCore", "Niagara", "MassEntity", "MoviePlayer",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { 
+			
+			"Http",
 			// AI/MassAI Plugin Modules
 			"MassAIBehavior",
 			"MassAIDebug",

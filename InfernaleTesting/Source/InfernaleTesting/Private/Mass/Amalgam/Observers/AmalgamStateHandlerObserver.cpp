@@ -14,6 +14,8 @@
 #include "MassExecutionContext.h"
 #include <MassEntityTemplateRegistry.h>
 
+#include "MassClient/Tags/ClientTags.h"
+
 UAmalgamStateHandlerObserver::UAmalgamStateHandlerObserver() : EntityQuery(*this)
 {
 	ObservedType = FAmalgamStateChangeTag::StaticStruct();
@@ -25,9 +27,16 @@ UAmalgamStateHandlerObserver::UAmalgamStateHandlerObserver() : EntityQuery(*this
 
 void UAmalgamStateHandlerObserver::ConfigureQueries()
 {
-	EntityQuery.AddRequirement<FAmalgamStateFragment>(EMassFragmentAccess::ReadWrite);
-
+	/* Tags requiered */
+	EntityQuery.AddTagRequirement<FAmalgamServerTag>(EMassFragmentPresence::All);
 	EntityQuery.AddTagRequirement<FAmalgamStateChangeTag>(EMassFragmentPresence::All);
+	
+	/* Tags to remove */
+	EntityQuery.AddTagRequirement<FAmalgamClientTag>(EMassFragmentPresence::None);
+	
+	/* Fragments */
+	EntityQuery.AddRequirement<FAmalgamStateFragment>(EMassFragmentAccess::ReadWrite);
+	
 
 	EntityQuery.RegisterWithProcessor(*this);
 }

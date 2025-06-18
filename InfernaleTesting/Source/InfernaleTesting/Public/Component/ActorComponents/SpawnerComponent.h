@@ -7,6 +7,7 @@
 #include "Mass/Spawner/AmalgamSpawerParent.h"
 #include "SpawnerComponent.generated.h"
 
+class UAmalgamTraitBase;
 class UUnitActorDataAsset;
 class AUnitActorManager;
 class ABuildingParent;

@@ -96,6 +96,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings") bool PandemoniumMBGivesVictoryPoints = true;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings") bool SelfTesting = true;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings") bool DefaultUseLAN = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings") bool UseMassLocal = false;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) TArray<FMeshById> MeshesById;
 

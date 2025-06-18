@@ -10,9 +10,11 @@
 #include <FunctionLibraries/FunctionLibraryInfernale.h>
 #include <UnitAsActor/NiagaraUnitAsActor.h>
 
-#include "MaterialHLSLTree.h"
+#include "DataAsset/GameSettingsDataAsset.h"
+#include "EnvironmentQuery/EnvQueryManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Mass/Army/AmalgamFragments.h"
+#include "MassClient/Spawners/ClientMassSpawner.h"
 #include "Structs/ReplicationStructs.h"
 
 FDataForSpawnVisual::FDataForSpawnVisual(): World(nullptr), Location(FVector(0.f, 0.f, 0.f)), EntityType(EEntityType::EntityTypeNone)
@@ -28,7 +30,9 @@ FHandleBool::FHandleBool(FMassEntityHandle InHandle, bool InValue): Handle(InHan
 }
 
 // Sets default values
-AAmalgamVisualisationManager::AAmalgamVisualisationManager(): InfernalePawn(nullptr)
+AAmalgamVisualisationManager::AAmalgamVisualisationManager(): ClientMassSpawnerGobborit(nullptr),
+                                                              ClientMassSpawnerNeras(nullptr),
+                                                              ClientMassSpawnerBehemot(nullptr), InfernalePawn(nullptr)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -42,7 +46,25 @@ void AAmalgamVisualisationManager::BeginPlay()
 	Super::BeginPlay();
 	ElementArray = TArray<FNiagaraVisualElement>();
 
-	if (!HasAuthority()) return;
+	if (!HasAuthority())
+	{
+		// const auto World = GetWorld();
+		// const auto PlayerController = UGameplayStatics::GetPlayerController(World, 0);
+		// UEnvQueryInstanceBlueprintWrapper* QueryInstance = UEnvQueryManager::RunEQSQuery(World, SimpleEQSQuery, PlayerController, EEnvQueryRunMode::SingleResult, nullptr);
+		//
+		// if (QueryInstance)
+		// {
+		// 	UE_LOG(LogTemp, Log, TEXT("Ran dummy EQS query — this forces EQS Manager creation."));
+		// }
+		// else
+		// {
+		// 	UE_LOG(LogTemp, Error, TEXT("Failed to run dummy EQS query."));
+		// }
+		const auto GameSettings = UFunctionLibraryInfernale::GetGameSettingsDataAsset();
+		if (GameSettings->UseMassLocal) CreateClientSpawners();
+		return;
+	}
+	//CreateClientSpawners(); //TODO: remove
 	const auto GameMode = Cast<AGameModeInfernale>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (!GameMode)
 	{
@@ -59,7 +81,45 @@ void AAmalgamVisualisationManager::Tick(float DeltaTime)
 	//GEngine->AddOnScreenDebugMessage(-1, 2.5f, FColor::Purple, FString::Printf(TEXT("Units in array: %d"), BPElementsArray.Num()));
 }
 
-void AAmalgamVisualisationManager::CreateAndAddToMapP(FMassEntityHandle EntityHandle, FOwner EntityOwner, const UWorld* World, UNiagaraSystem* NiagaraSystem, const FVector Location)
+void AAmalgamVisualisationManager::DebugAIandEQS()
+{
+	auto World = GetWorld();
+	if (!World)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.5f, FColor::Red, FString::Printf(TEXT("World is not valid (%s)"), HasAuthority() ? TEXT("Server") : TEXT("Client")));
+		return;
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.5f, FColor::Green, FString::Printf(TEXT("World is valid: %s (netcode %d) (%s)"), *World->GetName(), (int32)GetWorld()->WorldType, HasAuthority() ? TEXT("Server") : TEXT("Client")));
+	}
+	UEnvQueryManager* EQSManager = UEnvQueryManager::GetCurrent(World);
+	
+	if (EQSManager)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.5f, FColor::Purple, FString::Printf(TEXT("EQS Manager is available on %s."), HasAuthority() ? TEXT("Server") : TEXT("Client")));
+		//UE_LOG(LogTemp, Log, TEXT("EQS Manager is available on the %s."), HasAuthority() ? TEXT("Server") : TEXT("Client"));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.5f, FColor::Red, FString::Printf(TEXT("EQS Manager is NOT available on %s."), HasAuthority() ? TEXT("Server") : TEXT("Client")));
+		//UE_LOG(LogTemp, Warning, TEXT("EQS Manager is NOT available on the %s."), HasAuthority() ? TEXT("Server") : TEXT("Client"));
+	}
+	
+	UAISystem* AISystem = UAISystem::GetCurrent(*World);
+	if (AISystem)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.5f, FColor::Purple, FString::Printf(TEXT("AI System is present on %s world."), HasAuthority() ? TEXT("Server") : TEXT("Client")));
+		//UE_LOG(LogTemp, Log, TEXT("AI System is present on client world."));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.5f, FColor::Red, FString::Printf(TEXT("NO AI SYSTEM in %s world!"), HasAuthority() ? TEXT("Server") : TEXT("Client")));
+		//UE_LOG(LogTemp, Error, TEXT("NO AI SYSTEM in this client world!"));
+	}
+}
+
+void AAmalgamVisualisationManager::CreateAndAddToMapPSimple(FMassEntityHandle EntityHandle, FOwner EntityOwner, const UWorld* World, UNiagaraSystem* NiagaraSystem, const FVector Location)
 {
 	if (!HasAuthority())
 	{
@@ -69,7 +129,7 @@ void AAmalgamVisualisationManager::CreateAndAddToMapP(FMassEntityHandle EntityHa
 	CreateAndAddToMapMulticast(EntityHandle, EntityOwner, World, NiagaraSystem, Location);
 }
 
-void AAmalgamVisualisationManager::CreateAndAddToMapP(FMassEntityHandle EntityHandle, FDataForSpawnVisual DataForSpawnVisual)
+void AAmalgamVisualisationManager::CreateAndAddToMapPBP(FMassEntityHandle EntityHandle, FDataForSpawnVisual DataForSpawnVisual)
 {
 	if (!HasAuthority())
 	{
@@ -306,7 +366,7 @@ void AAmalgamVisualisationManager::AddToMap(FMassEntityHandle EntityHandle, AAct
 
 	if (ContainsElement(HandleAsNumber)) return;
 
-	FBPVisualElement NewElement(HandleAsNumber, BPActor);
+	FBPVisualElement NewElement(HandleAsNumber, -1, BPActor);
 
 	BPElementsArray.Add(NewElement);
 }
@@ -344,31 +404,92 @@ void AAmalgamVisualisationManager::CreateAndAddToMap(FMassEntityHandle EntityHan
 		}
 	}
 
-	const auto TeamColor = UFunctionLibraryInfernale::GetTeamColorCpp(DataForSpawnVisual.EntityOwner.Team, DataForSpawnVisual.EntityType);
-	const auto EmissiveColor = UFunctionLibraryInfernale::GetTeamColorEmissiveCpp(DataForSpawnVisual.EntityOwner.Team, DataForSpawnVisual.EntityType);
+	/* Client Spawn */
+	//TODO: 
+	// Let's try this
+	FAmalgamClientInitializeInfo ClientInitializeInfo;
+	ClientInitializeInfo.ServerEntityHandle = EntityHandle;
+	ClientInitializeInfo.EntityOwner = DataForSpawnVisual.EntityOwner;
+	ClientInitializeInfo.BPVisualisation = BPVisualisation;
+	ClientInitializeInfo.Location = DataForSpawnVisual.Location;
+	ClientInitializeInfo.Flux = DataForSpawnVisual.Flux;
+	ClientInitializeInfo.EntityType = DataForSpawnVisual.EntityType;
+
+	const auto GameSettings = UFunctionLibraryInfernale::GetGameSettingsDataAsset();
+	if (HasAuthority() || !GameSettings->UseMassLocal)
+	{
+		const auto TeamColor = UFunctionLibraryInfernale::GetTeamColorCpp(DataForSpawnVisual.EntityOwner.Team, DataForSpawnVisual.EntityType);
+		const auto EmissiveColor = UFunctionLibraryInfernale::GetTeamColorEmissiveCpp(DataForSpawnVisual.EntityOwner.Team, DataForSpawnVisual.EntityType);
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, TeamColor.ToFColorSRGB() , FString::Printf(TEXT("GetTeamColorCpp: Team: %s, EntityType: %s"), *UEnum::GetValueAsString(DataForSpawnVisual.EntityOwner.Team), *UEnum::GetValueAsString(DataForSpawnVisual.EntityType)));
+
+		AActor* Spawned;
+		Spawned = GetWorld()->SpawnActor<AActor>(BPVisualisation, DataForSpawnVisual.Location, FRotator(0.f, 0.f, 0.f));
+		auto NiagaraUnitAsActor = Cast<ANiagaraUnitAsActor>(Spawned);
+		if (!NiagaraUnitAsActor)
+		{
+			if (Spawned) GEngine->AddOnScreenDebugMessage(-1, 2.5f, FColor::Red, FString::Printf(TEXT("CreateAndAddToMap: Failed to cast to ANiagaraUnitAsActor, actor: %s"), *Spawned->GetName()));
+			else GEngine->AddOnScreenDebugMessage(-1, 2.5f, FColor::Red, TEXT("CreateAndAddToMap: Failed to cast to ANiagaraUnitAsActor, actor is null"));
+			return;
+		}
+		NiagaraUnitAsActor->SetNumberOfSpawners(DataForSpawnVisual.NumberOfSpawners);
+		NiagaraUnitAsActor->GetNiagaraComponent()->SetColorParameter("TeamColor", TeamColor);
+		NiagaraUnitAsActor->GetNiagaraComponent()->SetColorParameter("EmissiveColor", EmissiveColor);
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("-------------------------------------------------------------")));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, TeamColor.ToFColorSRGB(), FString::Printf(TEXT("GetTeamColorCpp: Team: %s, EntityType: %s"), *UEnum::GetValueAsString(DataForSpawnVisual.EntityOwner.Team), *UEnum::GetValueAsString(DataForSpawnVisual.EntityType)));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, EmissiveColor.ToFColorSRGB(), FString::Printf(TEXT("GetTeamColorCpp: Team: %s, EntityType: %s"), *UEnum::GetValueAsString(DataForSpawnVisual.EntityOwner.Team), *UEnum::GetValueAsString(DataForSpawnVisual.EntityType)));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("-------------------------------------------------------------")));
+		NiagaraUnitAsActor->SpeedMultiplierUpdated(DataForSpawnVisual.SpeedMultiplier);
+		NiagaraUnitAsActor->OwnerOnCreation(DataForSpawnVisual.EntityOwner);
+		const FBPVisualElement NewElement(HandleAsNumber, -1, Spawned);
+		BPElementsArray.Add(NewElement);
+		return;
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, TEXT("CreateAndAddToMap: Client side spawning"));
+	ClientInitializeInfos.Add(ClientInitializeInfo);
+	
+	/* Add to UnitToSpawn */
+	const auto Spawner = GetClientSpawner(DataForSpawnVisual.EntityType);
+	if (!Spawner)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.5f, FColor::Red, FString::Printf(TEXT("CreateAndAddToMap: Spawner is null for EntityType: %s"), *UEnum::GetValueAsString(DataForSpawnVisual.EntityType)));
+		return;
+	}
+	Spawner->DoClientSpawning();
+}
+
+FBPVisualElement AAmalgamVisualisationManager::CreateVisualUnitClient(FAmalgamClientInitializeInfo ClientInitializeInfo)
+{
+	const auto TeamColor = UFunctionLibraryInfernale::GetTeamColorCpp(ClientInitializeInfo.EntityOwner.Team, ClientInitializeInfo.EntityType);
+	const auto EmissiveColor = UFunctionLibraryInfernale::GetTeamColorEmissiveCpp(ClientInitializeInfo.EntityOwner.Team, ClientInitializeInfo.EntityType);
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, TeamColor.ToFColorSRGB() , FString::Printf(TEXT("GetTeamColorCpp: Team: %s, EntityType: %s"), *UEnum::GetValueAsString(DataForSpawnVisual.EntityOwner.Team), *UEnum::GetValueAsString(DataForSpawnVisual.EntityType)));
 
 	AActor* Spawned;
-	Spawned = GetWorld()->SpawnActor<AActor>(BPVisualisation, DataForSpawnVisual.Location, FRotator(0.f, 0.f, 0.f));
+	Spawned = GetWorld()->SpawnActor<AActor>(ClientInitializeInfo.BPVisualisation, ClientInitializeInfo.Location, FRotator(0.f, 0.f, 0.f));
 	auto NiagaraUnitAsActor = Cast<ANiagaraUnitAsActor>(Spawned);
 	if (!NiagaraUnitAsActor)
 	{
 		if (Spawned) GEngine->AddOnScreenDebugMessage(-1, 2.5f, FColor::Red, FString::Printf(TEXT("CreateAndAddToMap: Failed to cast to ANiagaraUnitAsActor, actor: %s"), *Spawned->GetName()));
 		else GEngine->AddOnScreenDebugMessage(-1, 2.5f, FColor::Red, TEXT("CreateAndAddToMap: Failed to cast to ANiagaraUnitAsActor, actor is null"));
-		return;
+		return FBPVisualElement();
 	}
-	NiagaraUnitAsActor->SetNumberOfSpawners(DataForSpawnVisual.NumberOfSpawners);
+	NiagaraUnitAsActor->SetNumberOfSpawners(1);
 	NiagaraUnitAsActor->GetNiagaraComponent()->SetColorParameter("TeamColor", TeamColor);
 	NiagaraUnitAsActor->GetNiagaraComponent()->SetColorParameter("EmissiveColor", EmissiveColor);
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("-------------------------------------------------------------")));
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, TeamColor.ToFColorSRGB(), FString::Printf(TEXT("GetTeamColorCpp: Team: %s, EntityType: %s"), *UEnum::GetValueAsString(DataForSpawnVisual.EntityOwner.Team), *UEnum::GetValueAsString(DataForSpawnVisual.EntityType)));
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, EmissiveColor.ToFColorSRGB(), FString::Printf(TEXT("GetTeamColorCpp: Team: %s, EntityType: %s"), *UEnum::GetValueAsString(DataForSpawnVisual.EntityOwner.Team), *UEnum::GetValueAsString(DataForSpawnVisual.EntityType)));
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("-------------------------------------------------------------")));
-	NiagaraUnitAsActor->SpeedMultiplierUpdated(DataForSpawnVisual.SpeedMultiplier);
-	NiagaraUnitAsActor->OwnerOnCreation(DataForSpawnVisual.EntityOwner);
-	const FBPVisualElement NewElement(HandleAsNumber, Spawned);
+
+
+	NiagaraUnitAsActor->SpeedMultiplierUpdated(1);
+	NiagaraUnitAsActor->OwnerOnCreation(ClientInitializeInfo.EntityOwner);
+
+	// TODO HandleServer / HandleClient
+	uint64 HandleAsNumber = ClientInitializeInfo.ServerEntityHandle.AsNumber();
+	const FBPVisualElement NewElement(HandleAsNumber, -1, Spawned);
 	BPElementsArray.Add(NewElement);
-	return;
+	return NewElement;
 }
 
 void AAmalgamVisualisationManager::UpdateItemPosition(FMassEntityHandle EntityHandle, FDataForVisualisation DataForVisualisation)
@@ -490,6 +611,11 @@ void AAmalgamVisualisationManager::ChangeBatchMulticast_Implementation(int Value
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Radius: %d"), Radius));
 }
 
+void AAmalgamVisualisationManager::SetGameIsEndingMulticast_Implementation(bool Value)
+{
+	bGameIsEnding = Value;
+}
+
 TWeakObjectPtr<UNiagaraComponent> AAmalgamVisualisationManager::GetNiagaraComponent(uint64 ElementHandle)
 {
 	TWeakObjectPtr<UNiagaraComponent> NC = FindElement(ElementHandle)->NiagaraComponent;
@@ -514,6 +640,75 @@ FBPVisualElement* AAmalgamVisualisationManager::FindElementBP(uint64 ElementHand
 		});
 
 	return FoundElement;
+}
+
+bool AAmalgamVisualisationManager::IsGameIsEnding()
+{
+	return bGameIsEnding;
+}
+
+void AAmalgamVisualisationManager::SetGameIsEnding(bool Value)
+{
+	SetGameIsEndingMulticast(Value);
+}
+
+void AAmalgamVisualisationManager::AddClientHandleTo(uint64 ElementHandle, uint64 ClientHandle)
+{
+	
+	FBPVisualElement* FoundElement = FindElementBP(ElementHandle);
+	if (!FoundElement) return;
+	FoundElement->ClientHandle = ClientHandle;
+}
+
+bool AAmalgamVisualisationManager::ClientInitializeInfosIsEmpty()
+{
+	return ClientInitializeInfos.IsEmpty();
+}
+
+FAmalgamClientInitializeInfo AAmalgamVisualisationManager::GetFirstClientInitializeInfosAndRemoveit()
+{
+	const auto FirstInfo = ClientInitializeInfos[0];
+	ClientInitializeInfos.RemoveAt(0);
+	return FirstInfo;
+}
+
+AClientMassSpawner* AAmalgamVisualisationManager::GetClientSpawner(EEntityType EntityType) const
+{
+	switch (EntityType) {
+	case EEntityType::EntityTypeNone:
+		break;
+	case EEntityType::EntityTypeBehemot:
+		return ClientMassSpawnerBehemot;
+	case EEntityType::EntityTypeGobborit:
+		return ClientMassSpawnerGobborit;
+	case EEntityType::EntityTypeNerras:
+		return ClientMassSpawnerNeras;
+	case EEntityType::EntityTypeNeutralCamp:
+		break;
+	case EEntityType::EntityTypeBoss:
+		break;
+	case EEntityType::EntityTypeCity:
+		break;
+	case EEntityType::EntityTypeBuilding:
+		break;
+	}
+	return nullptr;
+}
+
+void AAmalgamVisualisationManager::CreateClientSpawners()
+{
+	ClientMassSpawnerGobborit = GetWorld()->SpawnActor<AClientMassSpawner>(AClientMassSpawner::StaticClass(), FVector(0.f, 0.f, 0.f), FRotator(0.f, 0.f, 0.f));
+	ClientMassSpawnerGobborit->Initialize(EntityTypesGobborit, SpawnDataGeneratorsGobborit);
+
+	ClientMassSpawnerBehemot = GetWorld()->SpawnActor<AClientMassSpawner>(AClientMassSpawner::StaticClass(), FVector(0.f, 0.f, 0.f), FRotator(0.f, 0.f, 0.f));
+	ClientMassSpawnerBehemot->Initialize(EntityTypesBehemot, SpawnDataGeneratorsBehemot);
+
+	ClientMassSpawnerNeras = GetWorld()->SpawnActor<AClientMassSpawner>(AClientMassSpawner::StaticClass(), FVector(0.f, 0.f, 0.f), FRotator(0.f, 0.f, 0.f));
+	ClientMassSpawnerNeras->Initialize(EntityTypesNeras, SpawnDataGeneratorsNeras);
+
+	ClientMassSpawnerGobborit->PostRegister();
+	ClientMassSpawnerBehemot->PostRegister();
+	ClientMassSpawnerNeras->PostRegister();
 }
 
 int32 AAmalgamVisualisationManager::FindElementIndex(uint64 ElementHandle)

@@ -146,6 +146,7 @@ void UGameInstanceInfernale::SetVSync(bool bNewValue)
 
 void UGameInstanceInfernale::SaveGameSettings()
 {
+	// if (!bInitialized) return; 
 	if (!IsValid(PlayerSettingSave))
 	{
 		PlayerSettingSave = Cast<UPlayerSettingSave>(
@@ -157,12 +158,13 @@ void UGameInstanceInfernale::SaveGameSettings()
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("PlayerSettings not saved"));
 	}
 	UGameplayStatics::SaveGameToSlot(PlayerSettingSave, "PlayerSettings", 0);
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("PlayerSettings saved successfully, Camera zoom speed: ") +
+	//                                              FString::SanitizeFloat(PlayerSettingSave->CameraZoomSpeedMultiplier));
 	LoadGameSettings();
 }
 
-void UGameInstanceInfernale::LoadGameSettings()
+void UGameInstanceInfernale::SetupPlayerSettings()
 {
-	PlayerSettingSave = nullptr;
 	if (UGameplayStatics::DoesSaveGameExist("PlayerSettings", 0))
 	{
 		PlayerSettingSave = Cast<UPlayerSettingSave>(UGameplayStatics::LoadGameFromSlot("PlayerSettings", 0));
@@ -178,6 +180,12 @@ void UGameInstanceInfernale::LoadGameSettings()
 		PlayerSettingSave = Cast<UPlayerSettingSave>(
 			UGameplayStatics::CreateSaveGameObject(UPlayerSettingSave::StaticClass()));
 	}
+}
+
+void UGameInstanceInfernale::LoadGameSettings()
+{
+	PlayerSettingSave = nullptr;
+	SetupPlayerSettings();
 
 	if (InfernalePawn != nullptr)
 	{

@@ -22,6 +22,7 @@
 #include "Manager/UnitActorManager.h"
 
 #include "Manager/AmalgamVisualisationManager.h"
+#include "MassClient/Tags/ClientTags.h"
 
 UAmalgamFightProcessor::UAmalgamFightProcessor() : EntityQuery(*this)
 {
@@ -34,6 +35,15 @@ UAmalgamFightProcessor::UAmalgamFightProcessor() : EntityQuery(*this)
 
 void UAmalgamFightProcessor::ConfigureQueries()
 {
+	/* Tags requiered */
+	EntityQuery.AddTagRequirement<FAmalgamServerTag>(EMassFragmentPresence::All);
+	EntityQuery.AddTagRequirement<FAmalgamFightTag>(EMassFragmentPresence::All);
+	
+	/* Tags to remove */
+	EntityQuery.AddTagRequirement<FAmalgamClientTag>(EMassFragmentPresence::None);
+	EntityQuery.AddTagRequirement<FAmalgamClientExecuteTag>(EMassFragmentPresence::None);
+	
+	/* Fragments */
 	EntityQuery.AddRequirement<FTransformFragment>(EMassFragmentAccess::ReadOnly);
 	EntityQuery.AddRequirement<FAmalgamAggroFragment>(EMassFragmentAccess::ReadOnly);
 	EntityQuery.AddRequirement<FAmalgamFightFragment>(EMassFragmentAccess::ReadOnly);
@@ -42,10 +52,8 @@ void UAmalgamFightProcessor::ConfigureQueries()
 	EntityQuery.AddRequirement<FAmalgamOwnerFragment>(EMassFragmentAccess::ReadOnly);
 	EntityQuery.AddRequirement<FAmalgamTransmutationFragment>(EMassFragmentAccess::ReadOnly);
 	EntityQuery.AddRequirement<FAmalgamPathfindingFragment>(EMassFragmentAccess::ReadOnly);
-	
-	EntityQuery.AddTagRequirement<FAmalgamFightTag>(EMassFragmentPresence::All);
-	EntityQuery.AddTagRequirement<FAmalgamClientExecuteTag>(EMassFragmentPresence::None);
 
+	
 	EntityQuery.RegisterWithProcessor(*this);
 }
 

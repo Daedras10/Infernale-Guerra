@@ -27,6 +27,7 @@
 
 //Misc
 #include "Kismet/GameplayStatics.h"
+#include "MassClient/Tags/ClientTags.h"
 
 UAmalgamInitializeProcessor::UAmalgamInitializeProcessor() : EntityQuery(*this)
 {
@@ -42,6 +43,15 @@ UAmalgamInitializeProcessor::UAmalgamInitializeProcessor() : EntityQuery(*this)
 
 void UAmalgamInitializeProcessor::ConfigureQueries()
 {
+	/* Tags requiered */
+	EntityQuery.AddTagRequirement<FAmalgamServerTag>(EMassFragmentPresence::All);
+	EntityQuery.AddTagRequirement<FAmalgamInitializeTag>(EMassFragmentPresence::All);
+	
+	/* Tags to remove */
+	EntityQuery.AddTagRequirement<FAmalgamClientTag>(EMassFragmentPresence::None);
+
+	
+	/* Fragments */
 	EntityQuery.AddRequirement<FTransformFragment>(EMassFragmentAccess::ReadWrite);
 	
 	EntityQuery.AddRequirement<FAmalgamStateFragment>(EMassFragmentAccess::ReadWrite);
@@ -57,7 +67,6 @@ void UAmalgamInitializeProcessor::ConfigureQueries()
 	EntityQuery.AddRequirement<FAmalgamTransmutationFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FAmalgamSightFragment>(EMassFragmentAccess::ReadWrite);
 	
-	EntityQuery.AddTagRequirement<FAmalgamInitializeTag>(EMassFragmentPresence::All);
 
 	EntityQuery.RegisterWithProcessor(*this);
 }
@@ -200,11 +209,12 @@ void UAmalgamInitializeProcessor::Execute(FMassEntityManager& EntityManager, FMa
 			DataForSpawnVisual.SpeedMultiplier = SpeedMult;
 			DataForSpawnVisual.EntityType = FightFragment.GetEntityType();
 			DataForSpawnVisual.NumberOfSpawners = CurrentSpawner->GetNumberOfSpawners();
+			DataForSpawnVisual.Flux = Flux.Get();
 			
 			if(NiagaraFragment.UseBP())
-				VisualisationManager->CreateAndAddToMapP(Handle, DataForSpawnVisual);
+				VisualisationManager->CreateAndAddToMapPBP(Handle, DataForSpawnVisual);
 			else	
-				VisualisationManager->CreateAndAddToMapP(Handle, CurrentSpawner->GetOwner(), Context.GetWorld(), NiagaraFragment.GetSystem().Get(), Location);
+				VisualisationManager->CreateAndAddToMapPSimple(Handle, CurrentSpawner->GetOwner(), Context.GetWorld(), NiagaraFragment.GetSystem().Get(), Location);
 
 			Context.Defer().RemoveTag<FAmalgamInitializeTag>(Handle);
 			

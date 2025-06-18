@@ -20,6 +20,7 @@
 // Misc
 #include <LD/LDElement/Boss.h>
 #include "Component/ActorComponents/BattleManagerComponent.h"
+#include "MassClient/Tags/ClientTags.h"
 
 UAmalgamKillObserver::UAmalgamKillObserver() : EntityQuery(*this)
 {
@@ -34,6 +35,14 @@ UAmalgamKillObserver::UAmalgamKillObserver() : EntityQuery(*this)
 
 void UAmalgamKillObserver::ConfigureQueries()
 {
+	/* Tags requiered */
+	EntityQuery.AddTagRequirement<FAmalgamServerTag>(EMassFragmentPresence::All);
+	
+	/* Tags to remove */
+	EntityQuery.AddTagRequirement<FAmalgamClientTag>(EMassFragmentPresence::None);
+
+
+	/* Fragments */
 	EntityQuery.AddRequirement<FAmalgamTargetFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FAmalgamStateFragment>(EMassFragmentAccess::ReadOnly);
 	

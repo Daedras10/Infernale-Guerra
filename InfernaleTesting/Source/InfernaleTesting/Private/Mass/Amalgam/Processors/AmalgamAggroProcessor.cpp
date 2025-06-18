@@ -30,6 +30,7 @@
 
 //Misc
 #include "Components/SplineComponent.h"
+#include "MassClient/Tags/ClientTags.h"
 
 UAmalgamAggroProcessor::UAmalgamAggroProcessor() : EntityQuery(*this)
 {
@@ -40,6 +41,15 @@ UAmalgamAggroProcessor::UAmalgamAggroProcessor() : EntityQuery(*this)
 
 void UAmalgamAggroProcessor::ConfigureQueries()
 {
+	/* Tags requiered */
+	EntityQuery.AddTagRequirement<FAmalgamServerTag>(EMassFragmentPresence::All);
+	
+	/* Tags to remove */
+	EntityQuery.AddTagRequirement<FAmalgamClientTag>(EMassFragmentPresence::None);
+	EntityQuery.AddTagRequirement<FAmalgamAggroTag>(EMassFragmentPresence::None);
+	EntityQuery.AddTagRequirement<FAmalgamClientExecuteTag>(EMassFragmentPresence::None);
+	
+	/* Fragments */
 	EntityQuery.AddRequirement<FTransformFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FAmalgamTargetFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FAmalgamAggroFragment>(EMassFragmentAccess::ReadWrite);
@@ -47,9 +57,7 @@ void UAmalgamAggroProcessor::ConfigureQueries()
 	EntityQuery.AddRequirement<FAmalgamOwnerFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FAmalgamDirectionFragment>(EMassFragmentAccess::ReadWrite);
 
-	EntityQuery.AddTagRequirement<FAmalgamAggroTag>(EMassFragmentPresence::None);
-	EntityQuery.AddTagRequirement<FAmalgamClientExecuteTag>(EMassFragmentPresence::None);
-
+	
 	EntityQuery.RegisterWithProcessor(*this);
 }
 

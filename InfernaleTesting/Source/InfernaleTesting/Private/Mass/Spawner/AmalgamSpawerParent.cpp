@@ -21,8 +21,8 @@ AAmalgamSpawnerParent::AAmalgamSpawnerParent(): NiagaraSystem(nullptr), LocalSpa
                                                 SpawnerComponent(nullptr),
                                                 NiagaraComponent(nullptr)
 {
-	bReplicates = true;
-	NetCullDistanceSquared = 2200049013489586007688871936.0f; // ?
+	// bReplicates = true;
+	// NetCullDistanceSquared = 2200049013489586007688871936.0f; // ?
 }
 
 void AAmalgamSpawnerParent::DoAmalgamSpawning(const int Index)
@@ -57,7 +57,6 @@ void AAmalgamSpawnerParent::Initialize(USpawnerComponent* NewSpawnerComponent, i
 	Count = EntitySpawnCount;
 
 	EntityTypes = SpawnerComponent->GetEntityTypes();
-
 	SpawnDataGenerators = SpawnerComponent->GetSpawnDataGenerators();
 
 	NiagaraSystem = AmalgamData.NiagaraSystem;

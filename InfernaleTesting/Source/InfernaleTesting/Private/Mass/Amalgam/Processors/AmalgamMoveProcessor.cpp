@@ -23,6 +23,7 @@
 
 // Misc
 #include "Kismet/GameplayStatics.h"
+#include "MassClient/Tags/ClientTags.h"
 #include "Structs/ReplicationStructs.h"
 
 UAmalgamMoveProcessor::UAmalgamMoveProcessor() : EntityQuery(*this)
@@ -39,6 +40,14 @@ UAmalgamMoveProcessor::UAmalgamMoveProcessor() : EntityQuery(*this)
 
 void UAmalgamMoveProcessor::ConfigureQueries()
 {
+	/* Tags requiered */
+	EntityQuery.AddTagRequirement<FAmalgamServerTag>(EMassFragmentPresence::All);
+	EntityQuery.AddTagRequirement<FAmalgamMoveTag>(EMassFragmentPresence::All);
+	
+	/* Tags to remove */
+	EntityQuery.AddTagRequirement<FAmalgamClientTag>(EMassFragmentPresence::None);
+
+	/* Fragments */
 	EntityQuery.AddRequirement<FTransformFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FAmalgamMovementFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FAmalgamPathfindingFragment>(EMassFragmentAccess::ReadWrite);
@@ -49,8 +58,6 @@ void UAmalgamMoveProcessor::ConfigureQueries()
 	EntityQuery.AddRequirement<FAmalgamNiagaraFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FAmalgamDirectionFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FAmalgamTransmutationFragment>(EMassFragmentAccess::ReadWrite);
-	
-	EntityQuery.AddTagRequirement<FAmalgamMoveTag>(EMassFragmentPresence::All);
 	
 	EntityQuery.RegisterWithProcessor(*this);
 }
