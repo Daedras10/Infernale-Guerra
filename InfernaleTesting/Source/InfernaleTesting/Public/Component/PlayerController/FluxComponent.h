@@ -7,6 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "Enums/Enums.h"
 #include "Flux/Flux.h"
+#include "Structs/SimpleStructs.h"
 #include "FluxComponent.generated.h"
 
 class AMainBuilding;
@@ -15,6 +16,7 @@ class UFluxSettingsDataAsset;
 class AFlux;
 class AFluxNode;
 class ABuildingParent;
+
 
 USTRUCT(Blueprintable)
 struct FOriginsStuct

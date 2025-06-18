@@ -83,21 +83,6 @@
 		{
 			"Name": "MovieRenderPipeline",
 			"Enabled": true
-		},
-		{
-			"Name": "DLSS",
-			"Enabled": true,
-			"MarketplaceURL": "https://www.unrealengine.com/marketplace/en-US/product/nvidia-dlss"
-		},
-		{
-			"Name": "StreamlineDLSSG",
-			"Enabled": true,
-			"MarketplaceURL": "https://www.unrealengine.com/marketplace/en-US/product/nvidia-dlss"
-		},
-		{
-			"Name": "NIS",
-			"Enabled": true,
-			"MarketplaceURL": "https://www.unrealengine.com/marketplace/en-US/product/nvidia-dlss"
 		}
 	],
 	"TargetPlatforms": [
