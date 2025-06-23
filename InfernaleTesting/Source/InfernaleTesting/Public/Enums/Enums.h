@@ -92,7 +92,7 @@ enum EAmalgamDeathReason : uint8
 {
 	NoReason,
 	EndOfPath,
-	Eliminated, // bah oe on peut pas mettre killed y'a un autre enum qu'a le nom killed dans le fichier nique sa mere
+	Eliminated, // Killed already in use
 	Sacrificed, // used to charge boss 
 	Fell, // if entity enters kill zone
 	Error,
