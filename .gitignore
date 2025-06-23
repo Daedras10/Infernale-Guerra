@@ -73,3 +73,9 @@ InfernaleTesting/Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 InfernaleTesting/DerivedDataCache/*
+
+
+# Houdini
+InfernaleTesting/Plugins/HoudiniEngine/*
+InfernaleTesting/Plugins/HoudiniLiveLink/*
+InfernaleTesting/Plugins/HoudiniNiagara/*
