@@ -8,7 +8,7 @@ My End of study project, an RTS in hell focused on accessibility with inovative 
 
 *Game Artists:*
 - Thomas REIZER
-- Elenna Raguib
+- Elenna Raguin
 - Guissou SHEKARI
 - Ugo Menchi-Hinojo
 - Constance Clar
